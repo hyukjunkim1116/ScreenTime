@@ -1,31 +1,56 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>영화 정보 사이트</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
-    <nav class="bg-gray-800 text-white p-4">
-        <div class="max-w-7xl mx-auto flex gap-4">
-            <a href="/" class="hover:text-gray-300" tabindex="0">홈</a>
-            <a href="/search" class="hover:text-gray-300" tabindex="0">검색</a>
-            <a href="/favorite" class="hover:text-gray-300" tabindex="0">즐겨찾기</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Info</title>
+    <link href="assets/css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <h1 class="logo">
+          <a href="/" tabindex="0" aria-label="홈으로 이동"> Movie Info </a>
+        </h1>
+        <div class="search-container">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="영화 검색..."
+            aria-label="영화 검색"
+          />
+          <button
+            type="button"
+            id="searchButton"
+            aria-label="검색"
+            tabindex="0"
+          >
+            검색
+          </button>
         </div>
-    </nav>
+        <ul class="nav-links">
+          <li>
+            <a href="/favorite" tabindex="0" aria-label="즐겨찾기로 이동">
+              즐겨찾기
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
 
-    <main>
-        <div id="home-page" class="page-container"></div>
-        <div id="search-page" class="page-container"></div>
-        <div id="detail-page" class="page-container"></div>
-        <div id="favorite-page" class="page-container"></div>
+    <main class="main">
+      <section class="movies-container">
+        <h2 class="section-title">최신 영화</h2>
+        <div id="moviesList" class="movies-grid">
+          <!-- 영화 목록이 여기에 동적으로 추가됨 -->
+        </div>
+      </section>
     </main>
 
-    <script src="/routes/Home.js"></script>
-    <script src="/routes/Search.js"></script>
-    <script src="/routes/Detail.js"></script>
-    <script src="/routes/Favorite.js"></script>
-    <script src="/index.js"></script>
-</body>
-</html> 
+    <footer class="footer">
+      <p>© 2024 Movie Info. Powered by TMDB</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
