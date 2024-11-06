@@ -30,7 +30,7 @@
         </div>
         <ul class="nav-links">
           <li>
-            <a href="/favorite" tabindex="0" aria-label="즐겨찾기로 이동">
+            <a href="#/favorite" tabindex="0" aria-label="즐겨찾기로 이동">
               즐겨찾기
             </a>
           </li>
@@ -41,8 +41,26 @@
     <main class="main">
       <section class="movies-container">
         <h2 class="section-title">최신 영화</h2>
-        <div id="moviesList" class="movies-grid">
-          <!-- 영화 목록이 여기에 동적으로 추가됨 -->
+        <div class="movie-grid-container">
+          <div class="movie-grid"></div>
+        </div>
+        <div class="movie-detail-container"></div>
+        <div class="pagination">
+          <button
+            id="prevPage"
+            class="pagination-button"
+            aria-label="이전 페이지"
+          >
+            이전
+          </button>
+          <span id="currentPage" class="current-page">1</span>
+          <button
+            id="nextPage"
+            class="pagination-button"
+            aria-label="다음 페이지"
+          >
+            다음
+          </button>
         </div>
       </section>
     </main>
