@@ -226,10 +226,12 @@ const handleRoute = () => {
   const sectionTitle = document.querySelector(".section-title");
   const movieGrid = document.querySelector(".movie-grid-container");
   const movieDetail = document.querySelector(".movie-detail-container");
+  const paginationContainer = document.getElementById("paginationContainer");
 
   // 모든 컨테이너 숨기기
   movieGrid.style.display = "none";
   movieDetail.style.display = "none";
+  paginationContainer.style.display = "none"; // 기본적으로 페이지네이션 숨기기
 
   if (hash.startsWith("#/movie/")) {
     const movieId = hash.split("/")[2];
@@ -243,6 +245,7 @@ const handleRoute = () => {
   } else {
     sectionTitle.textContent = "최신 영화";
     movieGrid.style.display = "block";
+    paginationContainer.style.display = "flex"; // 메인 페이지에서만 페이지네이션 표시
     loadLatestMovies();
   }
 };
@@ -345,7 +348,7 @@ const handleFavoriteClick = (e, movie) => {
   );
 };
 
-// 영화 상세 정보 가져오기
+// 영화 세 정보 가져오기
 const loadMovieDetail = async (movieId) => {
   const url = `${MOVIE_DETAIL_URL}/${movieId}?api_key=${API_KEY}&language=ko-KR`;
   const movie = await fetchMovies(url);
@@ -361,22 +364,14 @@ const renderMovieDetail = (movie) => {
     <div class="movie-detail">
       <div class="movie-detail-header">
         <img 
-          src="${
-            movie.backdrop_path
-              ? IMAGE_BASE_URL + movie.backdrop_path
-              : "placeholder.jpg"
-          }"
+          src="${movie.backdrop_path ? IMAGE_BASE_URL + movie.backdrop_path : "placeholder.jpg"}"
           alt="${movie.title}"
           class="movie-backdrop"
           loading="lazy"
         />
         <button 
-          class="favorite-button detail-favorite ${
-            isFavorite(movie.id) ? "active" : ""
-          }"
-          aria-label="${movie.title} 즐겨찾기 ${
-    isFavorite(movie.id) ? "제거" : "추가"
-  }"
+          class="favorite-button detail-favorite ${isFavorite(movie.id) ? "active" : ""}"
+          aria-label="${movie.title} 즐겨찾기 ${isFavorite(movie.id) ? "제거" : "추가"}"
           data-movie-id="${movie.id}"
         >
           <span class="favorite-icon">★</span>
@@ -389,15 +384,42 @@ const renderMovieDetail = (movie) => {
           <p class="rating">평점: ${movie.vote_average.toFixed(1)}</p>
         </div>
         <p class="overview">${movie.overview || "줄거리 정보가 없습니다."}</p>
-        <button 
-          class="back-button"
-          onclick="window.history.back()"
-        >
-          뒤로가기
-        </button>
+        <div class="button-container">
+          <button 
+            class="back-button"
+            onclick="window.history.back()"
+          >
+            뒤로가기
+          </button>
+        </div>
       </div>
     </div>
   `;
+
+  // CSS 스타일 추가
+  const style = document.createElement('style');
+  style.textContent = `
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    
+    .back-button {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .back-button:hover {
+      background-color: #555;
+    }
+  `;
+  document.head.appendChild(style);
 
   // 상세 페이지 즐겨찾기 버튼 이벤트 리스너
   const favoriteButton = detailContainer.querySelector(".favorite-button");
@@ -501,3 +523,250 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+const showMovieDetail = (movieId) => {
+  const paginationContainer = document.getElementById('paginationContainer');
+  paginationContainer.style.display = 'none';
+  // ... 나머지 상세 페이지 로직 ...
+}
+
+const showMovieList = () => {
+  const paginationContainer = document.getElementById('paginationContainer');
+  paginationContainer.style.display = 'flex';
+  // ... 나머지 목록 페이지 로직 ...
+}
+
+// 다크모드 관련 상수
+const DARK_MODE_KEY = 'dark_mode_enabled';
+const DARK_MODE_CLASS = 'dark-mode';
+
+// 다크모드 상태 관리 함수
+const isDarkMode = () => {
+  return localStorage.getItem(DARK_MODE_KEY) === 'true';
+};
+
+// 다크모드 토글 함수
+const toggleDarkMode = () => {
+  const darkModeEnabled = isDarkMode();
+  localStorage.setItem(DARK_MODE_KEY, !darkModeEnabled);
+  document.documentElement.classList.toggle(DARK_MODE_CLASS, !darkModeEnabled);
+  
+  // 버튼 아이콘 업데이트
+  const darkModeButton = document.getElementById('darkModeToggle');
+  darkModeButton.innerHTML = !darkModeEnabled ? '☀️' : '🌙';
+  darkModeButton.setAttribute('aria-label', 
+    !darkModeEnabled ? '라이트모드로 전환' : '다크모드로 전환'
+  );
+};
+
+// 초기 다크모드 상태 설정
+const initDarkMode = () => {
+  const darkModeEnabled = isDarkMode();
+  document.documentElement.classList.toggle(DARK_MODE_CLASS, darkModeEnabled);
+  
+  const darkModeButton = document.getElementById('darkModeToggle');
+  if (darkModeButton) {
+    darkModeButton.innerHTML = darkModeEnabled ? '☀️' : '🌙';
+    darkModeButton.setAttribute('aria-label', 
+      darkModeEnabled ? '라이트모드로 전환' : '다크모드로 전환'
+    );
+  }
+};
+
+// 이벤트 리스너 설정
+document.addEventListener('DOMContentLoaded', () => {
+  // 기존 코드...
+
+  // 다크모드 토글 버튼 이벤트 리스너
+  const darkModeButton = document.getElementById('darkModeToggle');
+  if (darkModeButton) {
+    darkModeButton.addEventListener('click', toggleDarkMode);
+    darkModeButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDarkMode();
+      }
+    });
+  }
+
+  // 다크모드 초기화
+  initDarkMode();
+});
+
+// CSS 스타일 추가
+const darkModeStyles = document.createElement('style');
+darkModeStyles.textContent = `
+  /* 네비게이션 레이아웃 */
+  .header {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    margin: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 다크모드 변수 */
+  :root {
+    --light-bg: #ffffff;
+    --light-text: #333333;
+    --light-border: #e0e0e0;
+  }
+
+  .dark-mode {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --header-bg: #2d2d2d;
+    --border-color: #404040;
+    --input-bg: #3d3d3d;
+    --button-bg: #4a4a4a;
+    --button-hover: #5a5a5a;
+    --link-color: #9ecaed;
+    --secondary-text: #cccccc;
+    --detail-text: #333333;  /* 상세 페이지 텍스트 색상 추가 */
+  }
+
+  /* 다크모드 스타일 */
+  .dark-mode body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+  .dark-mode .header {
+    background-color: var(--header-bg);
+  }
+
+  .dark-mode .nav a,
+  .dark-mode .logo a {
+    color: var(--text-color);
+  }
+
+  .dark-mode .section-title,
+  .dark-mode .movie-title,
+  .dark-mode .movie-date,
+  .dark-mode .movie-rating,
+  .dark-mode .overview,
+  .dark-mode .release-date,
+  .dark-mode .rating,
+  .dark-mode .footer p {
+    color: var(--text-color);
+  }
+
+  .dark-mode .movie-card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+  }
+
+  .dark-mode .search-container input {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .dark-mode .search-container button,
+  .dark-mode .pagination-button,
+  .dark-mode .back-button {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .dark-mode .search-container button:hover,
+  .dark-mode .pagination-button:hover,
+  .dark-mode .back-button:hover {
+    background-color: var(--button-hover);
+  }
+
+  .dark-mode .current-page {
+    color: var(--text-color);
+  }
+
+  /* 다크모드 토글 버튼 스타일 */
+  .dark-mode-toggle {
+    background: transparent;
+    border: 2px solid #666;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .dark-mode-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  .dark-mode .dark-mode-toggle {
+    border-color: var(--text-color);
+    color: var(--text-color);
+  }
+
+  /* 영화 상세 페이지 다크모드 */
+  .dark-mode .movie-detail {
+    background-color: #ffffff;  /* 배경색을 흰색으로 변경 */
+    color: var(--detail-text);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode .movie-detail h1 {
+    color: var(--detail-text);
+    margin-bottom: 1rem;
+  }
+
+  .dark-mode .movie-detail .movie-info {
+    color: #666666;  /* 부가 정보 텍스트 색상 */
+    margin-bottom: 1.5rem;
+  }
+
+  .dark-mode .movie-detail .overview {
+    color: var(--detail-text);
+    line-height: 1.6;
+  }
+
+  .dark-mode .movie-detail .release-date,
+  .dark-mode .movie-detail .rating {
+    color: #666666;
+  }
+
+  /* 뒤로가기 버튼 스타일 */
+  .dark-mode .back-button {
+    background-color: var(--button-bg);
+    color: #ffffff;  /* 버튼 텍스트는 흰색으로 유지 */
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .dark-mode .back-button:hover {
+    background-color: var(--button-hover);
+  }
+`;
+document.head.appendChild(darkModeStyles);

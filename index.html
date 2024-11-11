@@ -30,6 +30,16 @@
         </div>
         <ul class="nav-links">
           <li>
+            <button
+              id="darkModeToggle"
+              class="dark-mode-toggle"
+              aria-label="다크모드 전환"
+              tabindex="0"
+            >
+              🌙
+            </button>
+          </li>
+          <li>
             <a href="#/favorite" tabindex="0" aria-label="즐겨찾기로 이동">
               즐겨찾기
             </a>
@@ -45,7 +55,7 @@
           <div class="movie-grid"></div>
         </div>
         <div class="movie-detail-container"></div>
-        <div class="pagination">
+        <div id="paginationContainer" class="pagination">
           <button
             id="prevPage"
             class="pagination-button"
