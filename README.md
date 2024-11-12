@@ -75,9 +75,7 @@ $ index.html에서 마우스 우클릭 후 Open with Live Server 클릭(단축�
 
   10.스켈레톤 UI (로딩 상태)<br>
 
-  11.반응형 디자인
-
-- 외부 API
+  11.반응형 디자인 <br>
 
   12. TMDb API 연동
 
