@@ -16,6 +16,7 @@ let currentPage = 1;
 
 // 영화 데이터 가져오기
 const fetchMovies = async (url) => {
+  showLoadingState(); // 로딩 상태 표시
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -67,9 +68,7 @@ const createMovieCard = (movie) => {
   card.className = "movie-card";
   card.innerHTML = `
     <div class="movie-card-inner">
-      <a href="#/movie/${movie.id}" class="movie-link" aria-label="${
-    movie.title
-  }">
+      <a href="#/movie/${movie.id}" class="movie-link" aria-label="${movie.title}">
         <div class="image-container">
           <img 
             class="lazy movie-poster"
@@ -83,7 +82,7 @@ const createMovieCard = (movie) => {
           />
         </div>
         <div class="movie-info">
-          <h3 class="movie-title">${movie.title}</h3>
+          <h3 class="movie-title text-ellipsis" title="${movie.title}">${movie.title}</h3>
           <p class="movie-date">개봉일: ${movie.release_date || "미정"}</p>
           <span class="movie-rating">⭐ ${movie.vote_average.toFixed(1)}</span>
         </div>
@@ -424,7 +423,7 @@ const renderMovieDetail = (movie) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // 버튼 요소 찾기
+    // 버튼 요 찾기
     const button = e.target.closest(".favorite-button");
     if (!button) return;
 
@@ -638,3 +637,30 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeFilters();
   // ... 기존 초기화 코드
 });
+
+// 스켈레톤 카드 생성 함수 수정
+const createSkeletonCard = () => {
+  return `
+    <div class="movie-card skeleton">
+      <div class="movie-card-inner">
+        <div class="image-container skeleton-image">
+          <div class="spinner-wrapper">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <div class="movie-info">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-text"></div>
+          <div class="skeleton-rating"></div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+// 로딩 상태 표시 함수
+const showLoadingState = () => {
+  const movieGrid = document.querySelector(".movie-grid");
+  const skeletons = Array(8).fill(null).map(() => createSkeletonCard()).join("");
+  movieGrid.innerHTML = skeletons;
+};

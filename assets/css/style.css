@@ -174,32 +174,31 @@ body {
 
 .movie-info {
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .movie-title {
   font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-weight: bold;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .movie-date {
   font-size: 0.9rem;
   color: #666;
+  margin: 0;
 }
 
 .movie-rating {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 1rem;
   font-size: 0.9rem;
-  margin-top: 0.5rem;
+  color: #f5c518;
+  margin: 0;
 }
 
 /* 로딩 상태 */
@@ -542,4 +541,117 @@ body {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 스켈레톤 UI 스타일 */
+.skeleton {
+  background: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 300px;
+  background: #eee;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 스피너 컨테이너 */
+.spinner-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 스피너 애니메이션 */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.skeleton-title {
+  height: 24px;
+  margin: 16px 12px;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 16px;
+  margin: 12px;
+  background: #eee;
+  border-radius: 4px;
+  width: 60%;
+}
+
+.skeleton-rating {
+  height: 16px;
+  margin: 12px;
+  background: #eee;
+  border-radius: 4px;
+  width: 40%;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 다크모드 대응 */
+[data-theme='dark'] .skeleton {
+  background: #2a2a2a;
+}
+
+[data-theme='dark'] .skeleton-image {
+  background: #333;
+}
+
+[data-theme='dark'] .skeleton-title,
+[data-theme='dark'] .skeleton-text,
+[data-theme='dark'] .skeleton-rating {
+  background: #444;
+}
+
+[data-theme='dark'] .spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-left-color: #666;
+}
+
+/* 텍스트 말줄임 스타일 추가 */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+
+.movie-title {
+  margin: 8px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+/* 호버 시 툴팁으로 전체 제목 표시 */
+.movie-title:hover {
+  position: relative;
+}
+
+/* 다크모드 대응 */
+[data-theme='dark'] .movie-date {
+  color: #999;
+}
+
+[data-theme='dark'] .movie-rating {
+  color: #ffd700;
 }
