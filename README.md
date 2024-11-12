@@ -79,7 +79,7 @@ $ index.html에서 마우스 우클릭 후 Open with Live Server 클릭(단축�
 
 - 외부 API
 
-    12. TMDb API 연동
+  12. TMDb API 연동
 
 ---
 
