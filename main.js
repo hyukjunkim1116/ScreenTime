@@ -14,6 +14,13 @@ const searchButton = document.getElementById("searchButton");
 // 페이지 상태 관리를 위한 변수 추가
 let currentPage = 1;
 
+// 전역 상태 관리 변수 추가
+let currentState = {
+  movies: [], // 현재 표시된 영화 목록
+  searchTerm: '',
+  isSearchResult: false
+};
+
 // 영화 데이터 가져오기
 const fetchMovies = async (url) => {
   showLoadingState(); // 로딩 상태 표시
@@ -133,18 +140,69 @@ const showError = (message) => {
   }
 };
 
-// 검색 기능
-const handleSearch = async () => {
+// 검색 기능 수정
+const handleSearch = async (event) => {
+  if (event) {
+    event.preventDefault();
+  }
+
   const searchTerm = searchInput.value.trim();
   if (!searchTerm) return;
 
+  const sectionTitle = document.querySelector(".section-title");
+  sectionTitle.textContent = `"${searchTerm}" 검색 결과`;
+
+  // 컨테이너 표시 설정
+  const movieGrid = document.querySelector(".movie-grid-container");
+  const movieDetail = document.querySelector(".movie-detail-container");
+  movieGrid.style.display = "block";
+  movieDetail.style.display = "none";
+
   const searchUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
     searchTerm
-  )}&language=ko-KR`;
+  )}&language=ko-KR&page=1`;
   const data = await fetchMovies(searchUrl);
 
-  if (data) {
-    renderMovies(data.results);
+  if (data && data.results) {
+    if (data.results.length === 0) {
+      showError("검색 결과가 없습니다.");
+    } else {
+      // 검색 결과를 전역 상태에 저장
+      currentState.movies = data.results;
+      currentState.searchTerm = searchTerm;
+      currentState.isSearchResult = true;
+      
+      // 필터링된 결과 표시
+      updateMovieDisplay();
+    }
+  }
+};
+
+// 영화 표시 업데이트 함수 추가
+const updateMovieDisplay = () => {
+  let movies = [...currentState.movies];
+  
+  // 필터링 적용
+  movies = filterMovies(movies);
+  // 정렬 적용
+  movies = sortMovies(movies, currentFilters.sort);
+  
+  renderMovies(movies);
+};
+
+// 필터 변경 이벤트 핸들러 수정
+const handleFilterChange = () => {
+  currentFilters = {
+    sort: document.getElementById("sortSelect").value,
+    genre: document.getElementById("genreSelect").value,
+    year: document.getElementById("yearSelect").value,
+  };
+
+  // 검색 결과가 있으면 검색 결과를 필터링
+  if (currentState.isSearchResult) {
+    updateMovieDisplay();
+  } else {
+    loadLatestMovies();
   }
 };
 
@@ -471,7 +529,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.results.length === 0) {
         showError("검색 결과가 없습니다.");
       } else {
-        renderMovies(data.results);
+        // 검색 결과를 전역 상태에 저장
+        currentState.movies = data.results;
+        currentState.searchTerm = searchTerm;
+        currentState.isSearchResult = true;
+        
+        // 필터링된 결과 표시
+        updateMovieDisplay();
       }
     }
   };
@@ -581,17 +645,6 @@ const filterMovies = (movies) => {
   });
 };
 
-// 필터 변경 이벤트 핸들러
-const handleFilterChange = () => {
-  currentFilters = {
-    sort: document.getElementById("sortSelect").value,
-    genre: document.getElementById("genreSelect").value,
-    year: document.getElementById("yearSelect").value,
-  };
-
-  loadLatestMovies();
-};
-
 // 이벤트 리스너 설정
 const setupFilterListeners = () => {
   document
@@ -614,13 +667,12 @@ const loadLatestMovies = async () => {
   const data = await fetchMovies(url);
 
   if (data) {
-    let movies = data.results;
-    // 필터링 적용
-    movies = filterMovies(movies);
-    // 정렬 적용
-    movies = sortMovies(movies, currentFilters.sort);
-
-    renderMovies(movies);
+    // 최신 영화 로드 시 검색 상태 초기화
+    currentState.movies = data.results;
+    currentState.searchTerm = '';
+    currentState.isSearchResult = false;
+    
+    updateMovieDisplay();
     updatePagination(data.total_pages);
   }
 };
